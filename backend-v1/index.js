@@ -78,26 +78,6 @@ const vodafoneRoutes = require("./routes/vodafoneRoutes");
 
 const app = express();
 
-// ✅ Ensure CORS is properly set up
-const allowedOrigins = [process.env.FRONTEND_URL];
-
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-  next();
-});
-
 // Connect to MongoDB
 connectDB();
 
@@ -115,6 +95,9 @@ app.use(
       collectionName: "sessions",
     }),
     cookie: {
+      httpOnly: true, // Prevents frontend JS from accessing the cookie
+      secure: process.env.NODE_ENV === "production", // Only send in HTTPS
+      sameSite: "None", // Allows cross-site cookies
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
