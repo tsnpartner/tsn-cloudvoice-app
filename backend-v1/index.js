@@ -82,14 +82,30 @@ const app = express();
 // ✅ Connect to MongoDB
 connectDB();
 
+// ✅ CORS Configuration
+const allowedOrigins = [
+  "https://tsnvoicebot.io/",
+  "https://www.tsnvoicebot.io",
+  "http://localhost:3000", // For local testing
+];
+
 const corsOptions = {
-  origin: ["https://tsnvoicebot.io/"], // Allow only this domain
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true, // Allow cookies/sessions
 };
+
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions)); // Handle preflight requests
+
+// ✅ Handle preflight (OPTIONS) requests
+app.options("*", cors(corsOptions));
 
 // ✅ Middleware
 app.use(express.json());
@@ -106,7 +122,7 @@ app.use(
     }),
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // True for HTTPS
+      secure: process.env.NODE_ENV === "production", // Only allow cookies in HTTPS
       sameSite: "None", // Required for cross-origin cookies
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
@@ -120,6 +136,11 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/manager", managerRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/vodafone", vodafoneRoutes);
+
+// ✅ Default Route
+app.get("/", (req, res) => {
+  res.send("🚀 API is running!");
+});
 
 // ✅ Server Listen
 const PORT = process.env.PORT || 4000;
