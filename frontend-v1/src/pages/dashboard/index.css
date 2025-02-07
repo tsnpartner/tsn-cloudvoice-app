@@ -1,0 +1,19 @@
+
+.nav-section {
+    display: inline-block;
+}
+.user-profile {
+    margin-top: 10px;
+}
+.trigger-button {
+    margin-top: 19px;
+}
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 20px;
+    background: #f7e5e5;
+    border: 1px solid gray;
+}
