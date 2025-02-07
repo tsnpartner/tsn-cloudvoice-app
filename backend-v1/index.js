@@ -1,10 +1,8 @@
-// index.js
 const express = require("express");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const connectDB = require("./config/db");
 const cors = require("cors");
-const User = require("./models/User");
 require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
@@ -12,26 +10,21 @@ const superAdminRoutes = require("./routes/superAdminRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const managerRoutes = require("./routes/managerRoutes");
 const userRoutes = require("./routes/userRoutes");
-
-// ADD
 const vodafoneRoutes = require("./routes/vodafoneRoutes");
 
 const app = express();
 
-// Add CORS middleware before your routes
-// app.use(
-//   cors({
-//     origin: process.env.FRONTEND_URL,
-//     credentials: true,
-//   })
-// );
-
+// CORS Configuration
 const corsOptions = {
-  origin: process.env.FRONTEND_URL,
-  method: ["GET", "POST", "PUT", "DELETE"],
+  origin: process.env.FRONTEND_URL, // Ensure it's correct without trailing slash
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Include OPTIONS
   allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true, // Allow credentials (cookies, sessions)
 };
 app.use(cors(corsOptions));
+
+// Handle preflight requests globally
+app.options("*", cors(corsOptions));
 
 // Connect to MongoDB
 connectDB();
@@ -55,14 +48,12 @@ app.use(
   })
 );
 
-// Routes
+// Routes (After CORS & Middleware)
 app.use("/api/auth", authRoutes);
 app.use("/api/super-admin", superAdminRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/manager", managerRoutes);
 app.use("/api/user", userRoutes);
-
-// ADD
 app.use("/api/vodafone", vodafoneRoutes);
 
 // Start Server
