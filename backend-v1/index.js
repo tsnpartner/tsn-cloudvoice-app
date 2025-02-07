@@ -69,7 +69,6 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 require("dotenv").config();
 
-// Import Routes
 const authRoutes = require("./routes/authRoutes");
 const superAdminRoutes = require("./routes/superAdminRoutes");
 const adminRoutes = require("./routes/adminRoutes");
@@ -82,11 +81,11 @@ const app = express();
 // ✅ Connect to MongoDB
 connectDB();
 
-// ✅ CORS Configuration
+// ✅ Explicitly Define Allowed Origins
 const allowedOrigins = [
-  "https://tsnvoicebot.io/",
+  "https://tsnvoicebot.io",
   "https://www.tsnvoicebot.io",
-  "http://localhost:3000", // For local testing
+  "http://localhost:3000", // Allow local testing
 ];
 
 const corsOptions = {
@@ -94,18 +93,36 @@ const corsOptions = {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error("CORS policy blocked this request."));
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true, // Allow cookies/sessions
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
 
-// ✅ Handle preflight (OPTIONS) requests
-app.options("*", cors(corsOptions));
+// ✅ Manually Set Headers for Preflight Requests
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS"
+    );
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization"
+    );
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+  }
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+  next();
+});
 
 // ✅ Middleware
 app.use(express.json());
@@ -122,9 +139,9 @@ app.use(
     }),
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Only allow cookies in HTTPS
-      sameSite: "None", // Required for cross-origin cookies
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
+      maxAge: 1000 * 60 * 60 * 24,
     },
   })
 );
