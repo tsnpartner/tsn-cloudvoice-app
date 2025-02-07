@@ -82,18 +82,14 @@ const app = express();
 // ✅ Connect to MongoDB
 connectDB();
 
-// ✅ CORS Configuration
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "*", // Allow frontend origin
+  origin: ["https://tsnvoicebot.io/"], // Allow only this domain
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true, // Allow cookies/sessions
 };
-
 app.use(cors(corsOptions));
-
-// ✅ Handle preflight (OPTIONS) requests
-app.options("*", cors(corsOptions));
+app.options("*", cors(corsOptions)); // Handle preflight requests
 
 // ✅ Middleware
 app.use(express.json());
