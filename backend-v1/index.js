@@ -65,10 +65,11 @@
 const express = require("express");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-const connectDB = require("./config/db");
 const cors = require("cors");
+const connectDB = require("./config/db");
 require("dotenv").config();
 
+// Import Routes
 const authRoutes = require("./routes/authRoutes");
 const superAdminRoutes = require("./routes/superAdminRoutes");
 const adminRoutes = require("./routes/adminRoutes");
@@ -78,13 +79,26 @@ const vodafoneRoutes = require("./routes/vodafoneRoutes");
 
 const app = express();
 
-// Connect to MongoDB
+// ✅ Connect to MongoDB
 connectDB();
 
-// Middleware
+// ✅ CORS Configuration
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "*", // Allow frontend origin
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true, // Allow cookies/sessions
+};
+
+app.use(cors(corsOptions));
+
+// ✅ Handle preflight (OPTIONS) requests
+app.options("*", cors(corsOptions));
+
+// ✅ Middleware
 app.use(express.json());
 
-// Sessions
+// ✅ Session Configuration
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -95,15 +109,15 @@ app.use(
       collectionName: "sessions",
     }),
     cookie: {
-      httpOnly: true, // Prevents frontend JS from accessing the cookie
-      secure: process.env.NODE_ENV === "production", // Only send in HTTPS
-      sameSite: "None", // Allows cross-site cookies
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // True for HTTPS
+      sameSite: "None", // Required for cross-origin cookies
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
 );
 
-// Routes (AFTER CORS Middleware)
+// ✅ Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/super-admin", superAdminRoutes);
 app.use("/api/admin", adminRoutes);
@@ -111,8 +125,8 @@ app.use("/api/manager", managerRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/vodafone", vodafoneRoutes);
 
-// Start Server
+// ✅ Server Listen
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
