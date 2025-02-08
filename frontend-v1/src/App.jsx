@@ -1,38 +1,8 @@
-// import React from "react";
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import Login from "./pages/auth/LoginPage";
-// import ResetPassword from "./pages/auth/ResetPasswordPage";
-// import ForgotPassword from "./pages/auth/ForgotPasswordPage";
-// import Dashboard from "./pages/dashboard/Dashboard";
-// import InitiateCall from "./pages/call/InitiateCall";
-// import CallLogsPage from "./pages/call/CallLogsPage";
-// import MissedCallPage from "./pages/call/MissedCallPage";
-// import AICallPage from "./pages/call/AICallPage";
-
-// function App() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         <Route path="/" element={<Login />} />
-//         <Route path="/login" element={<Login />} />
-//         <Route path="/forgot-password" element={<ForgotPassword />} />
-//         <Route path="/reset-password/:token" element={<ResetPassword />} />
-//         <Route path="/dashboard" element={<Dashboard />} />
-//         <Route path="/call/initiate-call" element={<InitiateCall />} />
-//         <Route path="/call/call-log" element={<CallLogsPage />} />
-//         <Route path="/call/miss-call" element={<MissedCallPage />} />
-//         <Route path="/ai/ai-call" element={<AICallPage />} />
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// }
-
-// export default App;
-
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/auth/LoginPage";
 import ResetPassword from "./pages/auth/ResetPasswordPage";
+import ResetPasswordConfirmation from "./pages/auth/ResetPasswordConfirmation";
 import ForgotPassword from "./pages/auth/ForgotPasswordPage";
 import Dashboard from "./pages/dashboard/Dashboard";
 import InitiateCall from "./pages/call/InitiateCall";
@@ -49,6 +19,8 @@ import LeadsPage from "./pages/crm/LeadsPage";
 import SenderIdPage from "./pages/sms/SenderIdPage";
 import SMSTemplate from "./pages/sms/SMSTemplate";
 import SMSLogs from "./pages/sms/SMSLogs";
+import WhatsAppPage from "./pages/whatsapp/whatsApp";
+import NotFound from "./shared/NotFound";
 
 function App() {
   return (
@@ -59,7 +31,11 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-
+        <Route
+          path="/reset-password-confirmation"
+          element={<ResetPasswordConfirmation />}
+        />
+        <Route path="*" element={<NotFound />} />
         {/* Protected Routes (Wrapped with MainLayout) */}
         <Route path="/" element={<MainLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -76,6 +52,7 @@ function App() {
           <Route path="/sms/sms-tempelete" element={<SMSTemplate />} />
           <Route path="/sms/sms-logs" element={<SMSLogs />} />
           {/* other routes */}
+          <Route path="/whatsapp" element={<WhatsAppPage />} />
           <Route path="/tickets" element={<TicketsPage />} />
           <Route path="/admin/setting" element={<AdminSettingPage />} />
           <Route path="/reporting" element={<ReportingPage />} />
