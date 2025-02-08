@@ -42,13 +42,13 @@ function InitiateCall() {
     initialValues: {
       cli: "7580812720", // Fixed CLI (hidden from UI)
       apartyno: "",
-      bpartyno: "9905290188", // Fixed B Party Number (hidden from UI)
+      bpartyno: "9028417996", // Fixed B Party Number (hidden from UI)
       reference_id: "123", // Fixed reference ID (hidden from UI)
     },
     validationSchema: Yup.object({
       apartyno: Yup.string()
         .matches(/^\d{5,15}$/, "Enter a valid phone number (5-15 digits)")
-        .required("A Party Number is required"),
+        .required("Number is required"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setStatusMessage({ success: "", error: "" });
